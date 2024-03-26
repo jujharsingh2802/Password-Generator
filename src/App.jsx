@@ -6,7 +6,7 @@ function App() {
   const [numberAllowed,setNumberAllowed] = useState(0)
   const [charAllowed,setCharAllowed] = useState(0)
   const[password,setPassword] = useState()
-
+  const[hashersAllowed,setHashersAllowed] = useState(0)
   const [buttonColor, setButtonColor] = useState("bg-teal-500")
 
   const passwordGenerator = useCallback(()=>{
@@ -15,10 +15,16 @@ function App() {
     const lowerCase ="abcdefghijklmnopqrstuvwxyz"
     const nums ="0123456789"
     const symb = "!@#$%^&*()_+-={}[]|\:;"
+    const hashers="_.-"
     
     let str = lowerCase
     if(upperCaseAllowed) str+= upperCase
     if(numberAllowed) str+= nums
+    if(hashersAllowed) {
+      str+=hashers;
+      setCharAllowed(0)
+    }
+
     if(charAllowed) str+=symb
 
     for (let i = 0; i < length; i++) {
@@ -28,7 +34,7 @@ function App() {
     setPassword(pwrd)
 
 
-  },[length,upperCaseAllowed,numberAllowed,charAllowed,setPassword]) 
+  },[length,upperCaseAllowed,numberAllowed,hashersAllowed,charAllowed,setPassword,setHashersAllowed]) 
 
 useEffect(() => {
   passwordGenerator()
@@ -123,11 +129,23 @@ useEffect(() => {
               type='checkbox'
               defaultChecked={charAllowed}
               id='characterInput'
+              disabled={hashersAllowed} //*disables character input if hashers are allowed.
               onChange={()=>{
                 setCharAllowed((prev)=> !prev)
               }}
               />
               <label className='ml-2' htmlFor = "characterInput">Characters(Symbols)</label>
+            </li>
+            <li className='ml-6'><input
+              type='checkbox'
+              defaultChecked={hashersAllowed}
+              id='hashingInput'
+              onChange={()=>{
+                setHashersAllowed((prev)=> !prev)
+                setCharAllowed(0) 
+              }}
+              />
+              <label className='ml-2' htmlFor = "hashingInput">Hashing(Symbols)</label>
             </li>
         </ul>
         <button onClick={()=>generatePasswordClicked()} className={`${buttonColor} text-white rounded-lg p-1 flex items-center font-light justify-center py-4 px-6 cursor-pointer text-3xl`} id="go"><img className="w-4 mr-1" src="images/generate.png" alt=""/> Generate Password</button>
